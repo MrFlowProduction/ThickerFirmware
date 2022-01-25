@@ -17,10 +17,13 @@ void set_output(bool state){
  * Ignition Alive Tick
  */
 void tick(){
-  neo(WHITE);
+  cli(); 
+  neo(BLUE);
   set_output(ON);
   delay(TICK_DELAY);
   set_output(OFF);
+  neo(RED);
+  sei();
 }
 
 
@@ -37,7 +40,7 @@ void drive_output(){
 
     // Ignition tick
     tick(); 
-    
+
     // ACK for watchdog
     need_tick = false;
     wdt_counter = 0;

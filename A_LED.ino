@@ -77,13 +77,24 @@ void neo_demo(){
 }
 
 
+void smooth_light(){
+
+  for(int i = 0; i < NEO_BRIGHT; i++){
+     neoled.setPixelColor(0, neoled.Color(
+        0,
+        0,
+        i));
+     neoled.show();
+     delay(10);
+  }
+  
+}
+
+
 
 void INIT_LED(){
   neoled.begin();
-
-  delay(5);
-  neo(WHITE);
-  delay(20);
-  neo_demo();
-  neo(BLANK);
+  //smooth_light();
+  neo(PURPLE);
+  delay(100);
 }

@@ -17,24 +17,48 @@ float get_voltage(){
 
   // Devide with voltage divider value
   //               R2  (R1 + R2) - Correction
-  return (samples / (22 / 142.0)) + ADC_CORRECTION;
+  return (samples * 10.9) + ADC_CORRECTION;
+}
+
+
+int ain(){
+  return analogRead(IGN_INPUT);
 }
 
 
 
 void measurement(){
-  neo(BLUE);
+  //neo(BLUE);
   current_voltage = get_voltage();
 
   // Switch OFF Ignition
   if(current_voltage < LOGIC_LOW_VOLTAGE){
-    current_ignition = OFF;
+    if(!current_ignition) { ign_counter = 0; return; } 
+    ign_counter++;
+    if(ign_counter >= IGN_COUNTER_OFFSET)
+    {
+      current_ignition = OFF;
+      wdt_counter = 0;
+      need_tick = false;
+    }  
   }
 
   // Switch ON Ignition
   else if(current_voltage > LOGIC_HIGH_VOLTAGE){
-    current_ignition = ON;
+    if(current_ignition) { ign_counter = 0; return; }  
+    ign_counter++; 
+    if(ign_counter >= IGN_COUNTER_OFFSET)
+    {
+      current_ignition = ON;
+      wdt_counter = 0;
+      need_tick = false;
+    }  
   }
+  else{
+    ign_counter = 0;
+  }
+
+  
 }
 
 
