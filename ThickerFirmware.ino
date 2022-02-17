@@ -83,6 +83,7 @@ Adafruit_NeoPixel   neoled = Adafruit_NeoPixel(1, NEO_LED, NEO_GRB + NEO_KHZ800)
 #define TICK_DELAY            1000                  // (ms) Tick delay
 #define TICK_INTERVAL         900                   // (sec) Tick interval - time between ticks
 #define IGN_COUNTER_OFFSET    8                     // Ignition switching offset (cycle count before change output)
+#define START_DELAY           2000                  // (ms) System start delay
 // =============================================================================================
 
 
@@ -178,6 +179,7 @@ void setup() {
   INIT_WDT();
   INIT_BUTTON();
   //test();
+  delay(START_DELAY);
 }
 
 void loop() {
