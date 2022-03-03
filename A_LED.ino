@@ -91,6 +91,13 @@ void smooth_light(){
 }
 
 
+void blink_led(byte color){
+  blink = !blink;
+
+  if(blink) neo(color);
+  else neo(BLANK);
+}
+
 
 void INIT_LED(){
   neoled.begin();

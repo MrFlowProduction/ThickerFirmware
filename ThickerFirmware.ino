@@ -1,7 +1,7 @@
 /*
    ########################################
    #                                      #
-   #        Thicker Firmware V1.1         #
+   #        Thicker Firmware V1.2         #
    #            by Mr.Flow                #
    #                                      #
    ########################################
@@ -58,6 +58,7 @@
 #include <avr/wdt.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <EEPROM.h>
 
 
 Adafruit_NeoPixel   neoled = Adafruit_NeoPixel(1, NEO_LED, NEO_GRB + NEO_KHZ800);
@@ -77,8 +78,6 @@ Adafruit_NeoPixel   neoled = Adafruit_NeoPixel(1, NEO_LED, NEO_GRB + NEO_KHZ800)
 #define SAMPLE_COUNT          10                    // Ignition voltage sample count per read
 #define SAMPLE_DELAY          5                     // (ms) Ignition delay between samples
 #define MEAS_INTERVAL         70                    // (ms) Ignition measurement interval
-#define LOGIC_LOW_VOLTAGE     25                    // (V) Ignition logic low voltage 
-#define LOGIC_HIGH_VOLTAGE    28                    // (V) Ignition logic high voltage
 #define ADC_CORRECTION        0                     // (V) Correction value
 #define TICK_DELAY            1000                  // (ms) Tick delay
 #define TICK_INTERVAL         900                   // (sec) Tick interval - time between ticks
@@ -102,7 +101,11 @@ static uint16_t       wdt_count         =   0;              // Watchdog calculat
 volatile bool         isButtonPressed   = false;            // Detect button pressed state
 volatile bool         isButtonHandled   = true;             // Button handling flag
 bool                  test_mode         = false;            // Test mode flag
+bool                  setup_mode        =   false;          // Setup mode if no logic values
 byte                  ign_counter       =   0;              // Ignition cicle counter
+float                 LOGIC_LOW_VOLTAGE =   25;             // (V) Ignition logic low voltage 
+float                 LOGIC_HIGH_VOLTAGE =  28;             // (V) Ignition logic high voltage
+bool                  blink             = false;            // Blink helper variable
 // =========================================================================================================
 
 
@@ -143,6 +146,7 @@ void test(){
 
   bool mode = 0;
   int sample = 0;
+  int counter = 0;
 
   neo_demo();
   
@@ -152,6 +156,15 @@ void test(){
       isButtonPressed = false;
       isButtonHandled = true;
       mode = !mode;
+
+      // Memória beállítás bekapcsolása
+      if(counter++ >= 10){
+        setMemOk(0);
+        neo(ORANGE);
+        setup_mode = true;
+        test_mode = false;
+        break;
+      }
     }
 
     if(mode){
@@ -171,6 +184,49 @@ void test(){
 }
 
 
+/* Memórában tárolt beállítások setelése */
+void setupper(){
+
+  bool setLow = true;
+
+  float low, high;
+  
+  while(true){
+
+    
+    // Blinking
+    if(setLow){
+      blink_led(RED);
+    }
+    else{
+      blink_led(GREEN);
+    }
+
+
+    if(isButtonPressed && !isButtonHandled){
+      isButtonPressed = false;
+      isButtonHandled = true;
+
+      if(setLow){
+        low = get_voltage();
+        setLow = false;
+      }
+      else{
+        high = get_voltage();
+        break;
+      }
+    }
+    
+    delay(500);
+  }
+
+  mem_set(low, high);
+  LOGIC_LOW_VOLTAGE = low;
+  LOGIC_HIGH_VOLTAGE = high;
+  setup_mode = false;
+}
+
+
 
 void setup() {
   INIT_LED();
@@ -178,7 +234,7 @@ void setup() {
   INIT_IGNITION();
   INIT_WDT();
   INIT_BUTTON();
-  //test();
+  INIT_MEMORY();
   delay(START_DELAY);
 }
 
@@ -186,6 +242,9 @@ void loop() {
 
   if(test_mode){
     test();
+  }
+  else if(setup_mode){
+    setupper();
   }
   else{
     measurement();
