@@ -235,7 +235,7 @@ void setup() {
   //INIT_WDT();
   INIT_BUTTON();
   INIT_MEMORY();
-  delay(START_DELAY);
+  if(!setup_mode && !test_mode) delay(START_DELAY);
 }
 
 void loop() {
