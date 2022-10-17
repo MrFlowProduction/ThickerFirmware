@@ -1,7 +1,7 @@
 /*
    ########################################
    #                                      #
-   #        Thicker Firmware V1.2         #
+   #        Thicker Firmware V1.3         #
    #            by Mr.Flow                #
    #                                      #
    ########################################
@@ -10,8 +10,8 @@
 
    Programmer:
    Florian Szekely
-   florian.szekely@aseso.hu
-   +36 30 556 2270
+   florian@mrflow.hu
+   +36 30 097 3366
 
 
    Supported Products:
@@ -83,6 +83,7 @@ Adafruit_NeoPixel   neoled = Adafruit_NeoPixel(1, NEO_LED, NEO_GRB + NEO_KHZ800)
 #define TICK_INTERVAL         900                   // (sec) Tick interval - time between ticks
 #define IGN_COUNTER_OFFSET    8                     // Ignition switching offset (cycle count before change output)
 #define START_DELAY           2000                  // (ms) System start delay
+#define START_DELAY           500                   // (ms) System start delay
 // =============================================================================================
 
 
@@ -103,8 +104,8 @@ volatile bool         isButtonHandled   = true;             // Button handling f
 bool                  test_mode         = false;            // Test mode flag
 bool                  setup_mode        =   false;          // Setup mode if no logic values
 byte                  ign_counter       =   0;              // Ignition cicle counter
-float                 LOGIC_LOW_VOLTAGE =   25;             // (V) Ignition logic low voltage 
-float                 LOGIC_HIGH_VOLTAGE =  28;             // (V) Ignition logic high voltage
+float                 LOGIC_LOW_VOLTAGE =   23.0;           // (V) Ignition logic low voltage 
+float                 LOGIC_HIGH_VOLTAGE =  26.0;           // (V) Ignition logic high voltage
 bool                  blink             = false;            // Blink helper variable
 // =========================================================================================================
 
@@ -220,10 +221,40 @@ void setupper(){
     delay(500);
   }
 
+
+  // Blinking the setted voltages
+  neo(ORANGE);
+  delay(10000);
+  neo(BLANK);   
+  delay(2000);
+
+  morse_number_with_led(low);
+  
+  neo(GREEN);
+  delay(5000);
+  neo(BLANK);   
+  delay(2000);
+  
+  morse_number_with_led(high);
+
+
+  // Save voltages
   mem_set(low, high);
   LOGIC_LOW_VOLTAGE = low;
   LOGIC_HIGH_VOLTAGE = high;
   setup_mode = false;
+}
+
+
+
+void dev(){
+
+  while(true){
+    morse_number_with_led(109.20482);
+    run_blink(1, GREEN, 2000);
+    morse_number_with_led(22.17);
+  }
+  
 }
 
 
@@ -239,6 +270,9 @@ void setup() {
 }
 
 void loop() {
+
+  // ONLY For development!!!
+  // setup_mode = true;
 
   if(test_mode){
     test();

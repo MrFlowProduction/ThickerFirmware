@@ -66,6 +66,9 @@ void mem_set(float lowVolt, float highVolt){
 
 void INIT_MEMORY(){
 
+  setup_mode = false;
+  return;
+
   // Ha még nem volt inicializálva a memória, akkor törli
   if(!mem_check()) mem_clear();
 

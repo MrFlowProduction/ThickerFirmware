@@ -91,6 +91,64 @@ void smooth_light(){
 }
 
 
+/*
+ * LED will blink x times with got color index
+ */
+void run_blink(byte count, byte color, int interval){
+
+  for(byte i = 0; i < count; i++){
+    neo(color);
+    delay(interval);
+    neo(BLANK);   
+    delay(interval);
+  }
+  
+}
+
+
+/*
+ * You can morse a number with RGB Light
+ */
+void morse_number_with_led(float value){
+
+  delay(1000);
+
+  if(value == 0) {
+    run_blink(1, LIGHT_BLUE, 3000);
+    return;
+  }
+
+  String ftext = String(value, 5);
+
+  byte digit;
+
+  for(byte i = 0; i < ftext.length(); i++){
+      
+      if(ftext.charAt(i) == '.') {
+        run_blink(1, WHITE, 2000);
+        continue;
+      }
+
+     digit = (byte)String(ftext.charAt(i)).toInt();
+     
+     if(digit == 0){ 
+        run_blink(1, LIGHT_BLUE, 700);
+        run_blink(1, PURPLE, 1200);
+     }
+     else{
+        run_blink(digit, BLUE, 700);
+        run_blink(1, PURPLE, 1200);
+     }
+     
+     delay(2000);
+  }
+}
+
+
+
+/*
+ * Simple blinker
+ */
 void blink_led(byte color){
   blink = !blink;
 
