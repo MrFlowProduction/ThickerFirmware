@@ -82,11 +82,8 @@ Adafruit_NeoPixel   neoled = Adafruit_NeoPixel(1, NEO_LED, NEO_GRB + NEO_KHZ800)
 #define TICK_DELAY            1000                  // (ms) Tick delay
 #define TICK_INTERVAL         900                   // (sec) Tick interval - time between ticks
 #define IGN_COUNTER_OFFSET    8                     // Ignition switching offset (cycle count before change output)
-<<<<<<< Updated upstream
 #define START_DELAY           2000                  // (ms) System start delay
-=======
 #define START_DELAY           500                   // (ms) System start delay
->>>>>>> Stashed changes
 // =============================================================================================
 
 
@@ -107,8 +104,8 @@ volatile bool         isButtonHandled   = true;             // Button handling f
 bool                  test_mode         = false;            // Test mode flag
 bool                  setup_mode        =   false;          // Setup mode if no logic values
 byte                  ign_counter       =   0;              // Ignition cicle counter
-float                 LOGIC_LOW_VOLTAGE =   24.3;           // (V) Ignition logic low voltage 
-float                 LOGIC_HIGH_VOLTAGE =  28.2;           // (V) Ignition logic high voltage
+float                 LOGIC_LOW_VOLTAGE =   23.0;           // (V) Ignition logic low voltage 
+float                 LOGIC_HIGH_VOLTAGE =  26.0;           // (V) Ignition logic high voltage
 bool                  blink             = false;            // Blink helper variable
 // =========================================================================================================
 
